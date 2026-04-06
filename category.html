@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Меню — Тот Ещё Гусь</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="goose_c.png">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="index.html">
+                    <img src="goose_c.png" alt="Тот Ещё Гусь" class="logo">
+                </a>
+                <div class="logo-text">
+                    <h1>Тот Ещё Гусь</h1>
+                    <p>Гастрокафе · Москва</p>
+                </div>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Меню</a>
+                <a href="contacts.html" class="nav-link">Контакты</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <a href="index.html" class="back-btn">← Назад к категориям</a>
+        <h2 class="page-title" id="category-title">Загрузка...</h2>
+
+        <div class="menu-grid" id="menu-container">
+            <!-- Блюда загружаются через JavaScript -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <img src="goose_c.png" alt="Тот Ещё Гусь" class="footer-logo">
+            <h3>Тот Ещё Гусь</h3>
+            <p>© 2026 Гастрокафе. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script src="menu-data.js"></script>
+    <script>
+        // Получаем параметр категории из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const cat = urlParams.get('cat');
+
+        // Соответствие URL-параметров и названий категорий
+        const categoryNames = {
+            'hot': 'Горячие блюда',
+            'tapas': 'Тапасы и брускетты',
+            'cold': 'Холодные закуски',
+            'raw': 'Сырое мясо и рыба',
+            'hotsnacks': 'Горячие закуски',
+            'soups': 'Супы',
+            'main': 'Основные блюда',
+            'lent': 'Постное меню',
+            'desserts': 'Десерты',
+            'drinks': 'Безалкогольные напитки'
+        };
+
+        // Устанавливаем заголовок
+        document.getElementById('category-title').textContent = categoryNames[cat] || 'Меню';
+
+        // Загружаем блюда
+        const container = document.getElementById('menu-container');
+        const dishes = menuData[cat] || [];
+
+        dishes.forEach((dish, index) => {
+            const card = document.createElement('a');
+            card.className = 'dish-card';
+            card.href = dish.url;
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.style.textDecoration = 'none';
+            card.style.color = 'inherit';
+
+            // Форматируем факты как список
+            const facts = dish.facts ? dish.facts.split('•').filter(f => f.trim()).map(f => 
+                `<li>${f.trim()}</li>`
+            ).join('') : '';
+
+            card.innerHTML = `
+                <div style="overflow: hidden; border-radius: 12px 12px 0 0;">
+                    <img src="${dish.image}" alt="${dish.name}" class="dish-image" onerror="this.src='goose_c.png'">
+                </div>
+                <div class="dish-content">
+                    <div class="dish-header">
+                        <h3 class="dish-name">${dish.name}</h3>
+                        <span class="dish-price">${dish.price}</span>
+                    </div>
+                    <p class="dish-description">${dish.description}</p>
+                    <div class="dish-meta">
+                        <span>${dish.calories || '—'}</span>
+                        <span>${dish.time || '—'}</span>
+                        ${dish.origin ? `<span>${dish.origin}</span>` : ''}
+                    </div>
+                    <div class="dish-details">
+                        ${facts ? `<h4>Интересные факты</h4><ul>${facts}</ul>` : ''}
+                        ${dish.wine ? `<h4>Сочетание с вином</h4><p>${dish.wine}</p>` : ''}
+                    </div>
+                    <div style="margin-top: 15px; text-align: center; color: var(--accent-red); font-size: 14px; font-weight: 500;">
+                        Подробнее →
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+
+        if (dishes.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Блюда не найдены</p>';
+        }
+    </script>
+</body>
+</html>
